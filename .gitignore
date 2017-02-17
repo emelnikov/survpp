@@ -1,0 +1,10 @@
+.project
+.pydevproject
+.settings/org.eclipse.core.resources.prefs
+*.pyc
+*/*.pyc
+config/telegram.conf
+config/core.conf
+config/socket.conf
+config/webcam.conf
+config/default/*
