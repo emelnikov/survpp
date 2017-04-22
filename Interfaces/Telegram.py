@@ -116,11 +116,11 @@ class RunClass(Thread):
                     self.bot.sendMessage(user_id, "List of commands")
                     
                 elif len(message_body) == len('/alarm') and message_body[0:6] == '/alarm':
-                    self.bot.send_to_all(u'Alarm enabled', user_id)
+                    self.send_to_all(u'Alarm enabled', user_id)
                     self.device_instances['Alarm'].play_alarm()
                     
                 elif len(message_body) == len('/alarmstop') and message_body[0:10] == '/alarmstop':
-                    self.bot.send_to_all(u'Alarm disabled', user_id)
+                    self.send_to_all(u'Alarm disabled', user_id)
                     self.device_instances['Alarm'].stop_alarm()
                     
                 else:
