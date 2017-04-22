@@ -93,6 +93,7 @@ class Operations(object):
                         self.device_instances[device[1]].up() #starting regardlress of status
                     else:
                         self.run_device(device[1], restore) #start if status is TRUE
+                    print device[1]
                 #if device is being launched manually from interface or by other device
                 elif not restore:
                     self.run_device(device[1]) #start if status is FALSE

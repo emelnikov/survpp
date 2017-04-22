@@ -109,7 +109,7 @@ class RunClass(Thread):
                         self.send_to_all( u'Could not run the devices', user_id)
                         
                 elif len(message_body) == len('/photo') and message_body[0:6] == '/photo':
-                    photo = self.device_instances['WebCam'].get_photo()
+                    photo = self.operations.device_instances['WebCam'].get_photo()
                     self.bot.sendPhoto(user_id, photo)
                     
                 elif len(message_body) == len('/help') and message_body[0:5] == '/help':
@@ -117,11 +117,17 @@ class RunClass(Thread):
                     
                 elif len(message_body) == len('/alarm') and message_body[0:6] == '/alarm':
                     self.send_to_all(u'Alarm enabled', user_id)
-                    self.device_instances['Alarm'].play_alarm()
+                    self.operations.device_instances['Alarm'].play_alarm()
                     
                 elif len(message_body) == len('/alarmstop') and message_body[0:10] == '/alarmstop':
                     self.send_to_all(u'Alarm disabled', user_id)
-                    self.device_instances['Alarm'].stop_alarm()
+                    self.operations.device_instances['Alarm'].stop_alarm()
+                    
+                elif len(message_body) == len('/temp') and message_body[0:5] == '/temp':
+                    self.bot.sendMessage(user_id, u"Temperature: " + str(self.operations.device_instances['Temperature'].temp) + u" C")
+                    
+                elif len(message_body) == len('/hum') and message_body[0:4] == '/hum':
+                    self.bot.sendMessage(user_id, u"Humidity: " + str(self.operations.device_instances['Temperature'].hum) + u"%")
                     
                 else:
                     self.bot.sendMessage(user_id, u'hey!')
