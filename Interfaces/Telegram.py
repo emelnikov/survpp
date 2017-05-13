@@ -113,7 +113,7 @@ class RunClass(Thread):
                     self.bot.sendPhoto(user_id, photo)
                     
                 elif len(message_body) == len('/help') and message_body[0:5] == '/help':
-                    self.bot.sendMessage(user_id, "List of commands")
+                    self.bot.sendMessage(user_id, self.get_help())
                     
                 elif len(message_body) == len('/alarm') and message_body[0:6] == '/alarm':
                     self.send_to_all(u'Alarm enabled', user_id)
@@ -129,6 +129,21 @@ class RunClass(Thread):
                 elif len(message_body) == len('/hum') and message_body[0:4] == '/hum':
                     self.bot.sendMessage(user_id, u"Humidity: " + str(self.operations.device_instances['Temperature'].hum) + u"%")
                     
+                elif message_body[0:13] == '/startdevice ':
+                    try:
+                        self.operations.run_device(message_body[13:])
+                    except Exception as e:
+                        self.operations.logger.error(str(e))
+                    if self.operations.device_instances[message_body[13:]].status():
+                        self.bot.sendMessage(user_id, message_body[13:] + u" device has been started")
+                    
+                elif message_body[0:12] == '/stopdevice ':
+                    try:
+                        self.operations.stop_device(message_body[12:])
+                        self.bot.sendMessage(user_id, message_body[12:] + u" device has been stopped")
+                    except Exception as e:
+                        self.operations.logger.error(str(e))
+                        
                 else:
                     self.bot.sendMessage(user_id, u'hey!')
 
@@ -151,6 +166,18 @@ class RunClass(Thread):
             self.operations.logger.info(str(e) + u': ' + u'sending message by user_id...')
             self.bot.sendMessage(user_id, message)
         return
+    
+    def get_help(self):
+        result = u"/up - start all devices\n" + \
+            u"/stop - stop all devices\n" + \
+            u"/status - general system status\n" + \
+            u"/photo - send last photo from camera\n" + \
+            u"/temp - show temperature\n" + \
+            u"/hum - show humidity\n" + \
+            u"/help - list of commands\n" + \
+            u"/alarm - play alarm\n" + \
+            u"/alarmstop - stop alarm"
+        return result
             
 class InstallClass(object):
     def __init__(self):

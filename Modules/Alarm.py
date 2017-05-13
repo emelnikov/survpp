@@ -22,7 +22,7 @@ class RunClass(Thread):
         self.homedir = self.config.get_homedir()
         self.playing = False
         Thread.__init__(self)
-        self.daemon = True
+        self.daemon = False
         self.operations = operations
         return
     
@@ -36,7 +36,6 @@ class RunClass(Thread):
                 self.playing = True
                 while self.playing:
                     for alarm in alarm_list:
-                        print self.homedir + alarm
                         try:
                             call(['play', self.homedir + alarm])
                         except Exception as e:

@@ -10,6 +10,7 @@ Created on Apr 22, 2017
 import RPi.GPIO as GPIO
 from tools import DHT11
 from threading import Thread
+from threading import enumerate as trenumerate
 from tools import Confreader
 from os import mknod
 from os import path
@@ -19,17 +20,13 @@ from time import sleep
 class RunClass(Thread):
     
     def __init__(self, operations=None):
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup()
-        self.instance = DHT11.DHT11(pin=4)
         self.temp = 0
         self.hum = 0
         self.config = Confreader.ReadConfig()
         self.homedir = self.config.get_homedir()
         self.operations = operations
         Thread.__init__(self)
-        self.daemon = True
+        self.daemon = False
         return
     
     #Obligatory functions
@@ -39,22 +36,27 @@ class RunClass(Thread):
             if self.status():
                 result = self.instance.read()
                 if result.is_valid():
-                    #print("Last valid input: " + str(datetime.datetime.now()))
                     self.temp = result.temperature
                     self.hum = result.humidity
                 sleep(1)
             else:
-                break
+                return
         return
     
     def up(self):
         if not self.status():
             mknod(self.homedir + 'temperature.lock')
+            GPIO.setwarnings(False)
             GPIO.setmode(GPIO.BCM)
-        self.start()
+            GPIO.cleanup()
+            self.instance = DHT11.DHT11(pin=4)
+            GPIO.setmode(GPIO.BCM)
+            self.start()
+            #print trenumerate()
         return
     
     def stop(self):
+        '''
         if self.status():
             try:
                 remove(self.homedir + 'temperature.lock')
@@ -67,6 +69,7 @@ class RunClass(Thread):
                 return True
         else:
             return False
+        '''
         return
     
     def status(self):

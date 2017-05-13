@@ -29,6 +29,8 @@ class Operations(object):
         self.logger.setLevel(self.config.get_log_level())
         if type(interface_modules) != None:
             self.interface_modules = interface_modules
+        self.device_modules = dict()
+        self.device_instances = dict()
         return
     
     def install_all(self):
@@ -80,12 +82,11 @@ class Operations(object):
         '''
         
         devices = self.config.get_devices()
-        self.device_modules = dict()
-        self.device_instances = dict()
         try:
             for device in devices:
-                self.device_modules[device[1]] = import_module("Modules." + device[1])
-                self.device_instances[device[1]] = self.device_modules[device[1]].RunClass(self)
+                if device[1] not in self.device_modules:
+                    self.device_modules[device[1]] = import_module("Modules." + device[1])
+                    self.device_instances[device[1]] = self.device_modules[device[1]].RunClass(self)
                 #if devices are being launched on system start-up
                 if restore:
                     #obligatory devices should be started in any case
@@ -120,6 +121,7 @@ class Operations(object):
                 return False
         elif not restore:
             if not self.device_instances[device_name].status():
+                print "starting device " + device_name
                 self.device_instances[device_name].up()
                 return True;
             else:
@@ -143,7 +145,7 @@ class Operations(object):
         else:
             return True
     
-    def stopDevice(self, device_name):
+    def stop_device(self, device_name):
         '''
         Stops device by its name.
         
