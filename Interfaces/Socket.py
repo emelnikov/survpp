@@ -24,7 +24,7 @@ class RunClass(Thread):
             self.interface_modules = operations.interface_modules
         self.operations = operations
         Thread.__init__(self)
-        self.daemon = True
+        self.daemon = False
         self.config = Confreader.ReadConfig()
         
     def run(self):

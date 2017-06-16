@@ -29,7 +29,7 @@ class RunClass(Thread):
                 self.interface_modules = operations.interface_modules
                 self.device_instances = operations.device_instances
         Thread.__init__(self)
-        self.daemon = True
+        self.daemon = False
         self.token = self.config.get_custom_value('config/telegram.conf', 'General', 'token')
         self.bot = Bot(self.token)
         self.allowed_ids = self.config.get_custom_section('config/telegram.conf', 'Allowed')
@@ -116,8 +116,10 @@ class RunClass(Thread):
                     self.bot.sendMessage(user_id, self.get_help())
                     
                 elif len(message_body) == len('/alarm') and message_body[0:6] == '/alarm':
-                    self.send_to_all(u'Alarm enabled', user_id)
-                    self.operations.device_instances['Alarm'].play_alarm()
+                    if self.operations.device_instances['Alarm'].play_alarm():
+                        self.send_to_all(u'Alarm enabled', user_id)
+                    else:
+                        self.bot.sendMessage(user_id, u"Alarm device is not started")
                     
                 elif len(message_body) == len('/alarmstop') and message_body[0:10] == '/alarmstop':
                     self.send_to_all(u'Alarm disabled', user_id)
