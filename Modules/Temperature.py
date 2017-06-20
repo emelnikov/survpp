@@ -17,33 +17,16 @@ from os import path
 from os import remove
 from time import sleep
 
-class RunClass(Thread):
-    
+class RunClass():
     def __init__(self, operations=None):
         self.temp = 0
         self.hum = 0
         self.config = Confreader.ReadConfig()
         self.homedir = self.config.get_homedir()
         self.operations = operations
-        Thread.__init__(self)
-        self.daemon = False
-        return
-    
-    #Obligatory functions
-    
-    def run(self):
-        while True:
-            if self.status():
-                result = self.instance.read()
-                if result.is_valid():
-                    self.temp = result.temperature
-                    self.hum = result.humidity
-                sleep(1)
-            else:
-                return
-        return
     
     def up(self):
+        self.threadinstance = ThreadClass(self, self.operations)
         if not self.status():
             mknod(self.homedir + 'temperature.lock')
             GPIO.setwarnings(False)
@@ -51,7 +34,7 @@ class RunClass(Thread):
             GPIO.cleanup()
             self.instance = DHT11.DHT11(pin=4)
             GPIO.setmode(GPIO.BCM)
-            self.start()
+            self.threadinstance.start()
             #print trenumerate()
         return
     
@@ -81,3 +64,25 @@ class RunClass(Thread):
     
     def info(self):
         return 'Temperature device'
+
+class ThreadClass(Thread):
+    
+    def __init__(self, runinstance, operations=None):
+        self.operations = operations
+        Thread.__init__(self)
+        self.daemon = False
+        self.runinstance = runinstance
+    
+    #Obligatory functions
+    
+    def run(self):
+        while True:
+            if self.runinstance.status():
+                result = self.runinstance.instance.read()
+                if result.is_valid():
+                    self.runinstance.temp = result.temperature
+                    self.runinstance.hum = result.humidity
+                sleep(1)
+            else:
+                return
+        return
