@@ -24,7 +24,7 @@ class RunClass():
         self.threadinstance = ThreadClass(self, self.operations)
         if not self.status():
             mknod(self.threadinstance.homedir + 'alarm.lock')
-            self.threadinstance.start()
+        self.threadinstance.start()
         return
     
     def stop(self):

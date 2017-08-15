@@ -29,12 +29,12 @@ class RunClass():
         self.threadinstance = ThreadClass(self, self.operations)
         if not self.status():
             mknod(self.homedir + 'temperature.lock')
-            GPIO.setwarnings(False)
-            GPIO.setmode(GPIO.BCM)
-            GPIO.cleanup()
-            self.instance = DHT11.DHT11(pin=4)
-            GPIO.setmode(GPIO.BCM)
-            self.threadinstance.start()
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.cleanup()
+        self.instance = DHT11.DHT11(pin=4)
+        GPIO.setmode(GPIO.BCM)
+        self.threadinstance.start()
             #print trenumerate()
         return
     

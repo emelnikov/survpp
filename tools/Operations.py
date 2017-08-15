@@ -121,7 +121,7 @@ class Operations(object):
                 return False
         elif not restore:
             if not self.device_instances[device_name].status():
-                print "starting device " + device_name
+                #print "starting device " + device_name
                 self.device_instances[device_name].up()
                 return True;
             else:
