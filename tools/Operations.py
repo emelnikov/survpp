@@ -221,20 +221,19 @@ class Operations(object):
         Returns: status as string
         '''
         
-        result = u'[Interfaces]\n'
+        result = {'interfaces': dict(), 'devices': dict()}
         for instance in self.interface_instances:
             if self.interface_instances[instance].status():
-                status = u'UP'
+                status = 'UP'
             else:
-                status = u'DOWN'
-            result += self.interface_instances[instance].info() + u': ' + status + u'\n'
-        result += u'[Devices]\n'
+                status = 'DOWN'
+            result['interfaces'][self.interface_instances[instance].info()] = status
         for device in self.device_instances:
             if self.device_instances[device].status():
-                status = u'UP'
+                status = 'UP'
             else:
-                status = u'DOWN'
-            result += self.device_instances[device].info() + u': ' + status + u'\n'
+                status = 'DOWN'
+            result['devices'][self.device_instances[device].info()] = status
         return result
     
     def is_obligatory(self, module, mod_type):

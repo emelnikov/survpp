@@ -14,6 +14,7 @@ from os import mknod
 from os import path
 from os import remove
 from subprocess import call
+import json
 import urllib
 
 class RunClass(Thread):
@@ -94,7 +95,8 @@ class RunClass(Thread):
         else:
             if self.check_access(user_id):
                 if len(message_body) == len('/status') and message_body[0:7] == '/status':
-                    self.bot.sendMessage(user_id, self.operations.get_statuses())
+                    self.bot.sendMessage(user_id, self.get_statuses())
+                    #self.bot.sendMessage(user_id, self.operations.get_statuses())
                     
                 elif len(message_body) == len('/stop') and message_body[0:5] == '/stop':
                     stop_result = self.operations.stop_devices()
@@ -168,6 +170,15 @@ class RunClass(Thread):
             self.operations.logger.info(str(e) + u': ' + u'sending message by user_id...')
             self.bot.sendMessage(user_id, message)
         return
+
+    def get_statuses(self):
+        result = ''
+        statuses = json.loads(json.dumps(self.operations.get_statuses()))
+        for type, entities in statuses.iteritems():
+            result += '[' + type.title() + ']\n'
+            for name, status in entities.iteritems():
+                result += name + ': ' + status + '\n'
+        return result
     
     def get_help(self):
         result = u"/up - start all devices\n" + \

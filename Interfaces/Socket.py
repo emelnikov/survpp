@@ -15,6 +15,7 @@ from os import mknod
 from os import path
 from os import remove
 import socket
+import json
 from __builtin__ import True
 
 class RunClass(Thread):
@@ -53,9 +54,15 @@ class RunClass(Thread):
                                     self.operations.run_interface(params)
                                 elif method == 'alarm_interface':
                                     self.alarm_interface(params)
+                                elif method == 'status':
+                                    conn.send(self.get_statuses(params))
+                                elif method == 'stop':
+                                    conn.send(self.stop_all())
+                                elif method == 'up':
+                                    conn.send(self.start_all())
                                 else:
                                     self.operations.logger.warning('Unknown method was used: ' + method + ' with parameters: ' + params)
-                            conn.send(data.upper())
+                            #conn.send(data.upper())
             except Exception as e:
                 self.operations.logger.error(str(e))
                 conn.close()
@@ -110,6 +117,21 @@ class RunClass(Thread):
             return False
         else:
             return True
+
+    def start_all(self):
+        if self.operations.run_devices():
+            return json.dumps({'status': 'started'})
+        else:
+            return json.dumps({'status': 'error'})
+
+    def stop_all(self):
+        if self.operations.stop_devices():
+            return json.dumps({'status': 'stopped'})
+        else:
+            return json.dumps({'status': 'error'})
+
+    def get_statuses(self, data):
+        return json.dumps(self.operations.get_statuses())
         
 class InstallClass(object):
     
