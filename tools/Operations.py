@@ -160,6 +160,15 @@ class Operations(object):
             return False
         else:
             return True
+
+    def get_device_config(self, device):
+        try:
+            methods = self.config.get_config('config/modules/' + device + '.conf')
+        except Exception as e:
+            self.logger.warning('There is no config for ' + device + ' device')
+        else:
+            return False
+        return
     
     #Interfaces
     
@@ -210,7 +219,7 @@ class Operations(object):
         else:
             self.interface_instances[interface_name].stop()
         return
-    
+
     #Misc
     
     def get_statuses(self):
@@ -234,6 +243,18 @@ class Operations(object):
             else:
                 status = 'DOWN'
             result['devices'][self.device_instances[device].info()] = status
+        return result
+
+    def list_devices(self):
+        result = list()
+        for device in self.device_instances:
+            result.append(device)
+        return result
+
+    def list_interfaces(self):
+        result = list()
+        for interface in self.interface_instances:
+            result.append(interface)
         return result
     
     def is_obligatory(self, module, mod_type):

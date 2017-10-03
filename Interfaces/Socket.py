@@ -54,6 +54,12 @@ class RunClass(Thread):
                                     self.operations.run_interface(params)
                                 elif method == 'alarm_interface':
                                     self.alarm_interface(params)
+                                elif method == 'list_devices':
+                                    conn.send(self.list_devices(params))
+                                elif method == 'list_interfaces':
+                                    conn.send(self.list_interfaces(params))
+                                elif method == 'device_config':
+                                    conn.send(self.get_device_config(params))
                                 elif method == 'status':
                                     conn.send(self.get_statuses(params))
                                 elif method == 'stop':
@@ -132,6 +138,22 @@ class RunClass(Thread):
 
     def get_statuses(self, data):
         return json.dumps(self.operations.get_statuses())
+
+    def list_devices(self, data):
+        return json.dumps(self.operations.list_devices())
+
+    def list_interfaces(self, data):
+        return json.dumps(self.operations.list_interfaces())
+
+    def get_device_config(self, data):
+        device = data['device']
+        print data['device']
+        result = self.operations.get_device_config(device)
+        if result:
+            return json.dumps(result)
+        else:
+            result = {"error": "no config"}
+            return json.dumps(result)
         
 class InstallClass(object):
     
